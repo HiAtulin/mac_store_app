@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/controllers/auth_controller.dart';
 import 'package:mac_store_app/views/screens/authentication_screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,6 +13,24 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthController _authController = AuthController();
+  late String email;
+  late String password;
+  bool isLoading = false;
+
+  loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _authController
+        .signInUsers(context: context, email: email, password: password)
+        .whenComplete(() {
+          _formKey.currentState!.reset();
+          setState(() {
+            isLoading = false;
+          });
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) {
+                      email = value;
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'enter your email';
@@ -96,6 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 20),
 
                   TextFormField(
+                    onChanged: (value) {
+                      password = value;
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'enter your password';
@@ -130,9 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                        print('pass');
+                        loginUser();
                       } else {
                         print('failed');
                       }
@@ -201,15 +226,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Center(
-                            child: Text(
-                              'Sign in',
-                              style: GoogleFonts.getFont(
-                                "Lato",
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: isLoading
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(
+                                    'Sign in',
+                                    style: GoogleFonts.getFont(
+                                      "Lato",
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),

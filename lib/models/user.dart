@@ -8,6 +8,7 @@ class User {
   final String city;
   final String locality;
   final String password;
+  final String token;
 
   User({
     required this.id,
@@ -17,6 +18,7 @@ class User {
     required this.city,
     required this.locality,
     required this.password,
+    required this.token,
   });
 
   //convert to map
@@ -29,6 +31,7 @@ class User {
       'city': city,
       'locality': locality,
       'password': password,
+      'token': token,
     };
   }
 
@@ -45,6 +48,7 @@ class User {
       city: map['city'] as String? ?? "",
       locality: map['locality'] as String? ?? "",
       password: map['password'] as String? ?? "",
+      token: map['token'] as String? ?? "",
     );
   }
 
