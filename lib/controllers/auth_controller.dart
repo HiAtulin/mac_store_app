@@ -2,13 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mac_store_app/global_variables.dart';
 import 'package:mac_store_app/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:mac_store_app/provider/user_provider.dart';
 import 'package:mac_store_app/services/manage_http_response.dart';
 import 'package:mac_store_app/views/screens/authentication_screens/login_screen.dart';
 import 'package:mac_store_app/views/screens/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+final providerContainer = ProviderContainer();
 class AuthController {
   Future<void> signUpUsers({
     required context,
@@ -37,7 +41,14 @@ class AuthController {
       manageHttpResponse(
         response: response,
         context: context,
-        onSuccess: () {
+        onSuccess: () async {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String token = jsonDecode(response.body)['token'];
+          await preferences.setString('auth_token', token);
+          final userJson = jsonEncode(jsonDecode(response.body)['user']);
+          providerContainer.read(userProvider.notifier).setUser(userJson);
+          await preferences.setString('user', userJson);
+          
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
