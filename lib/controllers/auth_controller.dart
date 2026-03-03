@@ -12,7 +12,6 @@ import 'package:mac_store_app/views/screens/authentication_screens/login_screen.
 import 'package:mac_store_app/views/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final providerContainer = ProviderContainer();
 class AuthController {
   Future<void> signUpUsers({
     required context,
@@ -46,9 +45,8 @@ class AuthController {
           String token = jsonDecode(response.body)['token'];
           await preferences.setString('auth_token', token);
           final userJson = jsonEncode(jsonDecode(response.body)['user']);
-          providerContainer.read(userProvider.notifier).setUser(userJson);
           await preferences.setString('user', userJson);
-          
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -77,7 +75,14 @@ class AuthController {
       manageHttpResponse(
         response: response,
         context: context,
-        onSuccess: () {
+        onSuccess: () async {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String token = jsonDecode(response.body)['token'];
+          preferences.setString('auth_token', token);
+          final userJson = jsonEncode(jsonDecode(response.body)['user']);
+          ProviderContainer().read(userProvider.notifier).setUser(userJson);
+          await preferences.setString('user', userJson);
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainScreen()),
@@ -87,6 +92,23 @@ class AuthController {
         },
       );
     } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> signOutUsers({required context}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.remove('auth_token');
+      await preferences.remove('user');
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+      showSnackBar(context, "Logged Out Successfully");
+    } catch (e) {
+      showSnackBar(context, "Error Logging Out");
       print("Error: $e");
     }
   }

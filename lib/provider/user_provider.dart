@@ -17,8 +17,14 @@ class UserProvider extends StateNotifier<User?> {
       );
   User? get user => state;
   void setUser(String userJson) => state = User.fromJson(userJson);
+  void clearUser() {
+    state = null;
+  }
 }
+// Clear user data when logging out
 
 final userProvider = StateNotifierProvider<UserProvider, User?>(
   (ref) => UserProvider(),
 );
+
+// Clear user data when logging out

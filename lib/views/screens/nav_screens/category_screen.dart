@@ -24,6 +24,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     super.initState();
     futureCategories = CategoryController().loadCategories();
     futureCategories.then((categories) {
+      if (!mounted) return; // 检查 widget 是否仍然挂载
       for (Category category in categories) {
         if (category.name == "Fashion") {
           setState(() {
@@ -35,16 +36,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    // 清理资源
+    super.dispose();
+  }
+
   Future<void> _loadSubcategories(String categoryName) async {
-    if (_selectedCategory != null) {
+    if (_selectedCategory != null && mounted) { // 检查 widget 是否仍然挂载
       setState(() {
         _subcategories = [];
       });
       List<Subcategory> subcategories = await subcategoryController
           .getSubCategoriesByCategoryName(categoryName);
-      setState(() {
-        _subcategories = subcategories;
-      });
+      if (mounted) { // 检查 widget 是否仍然挂载
+        setState(() {
+          _subcategories = subcategories;
+        });
+      }
     }
   }
 
