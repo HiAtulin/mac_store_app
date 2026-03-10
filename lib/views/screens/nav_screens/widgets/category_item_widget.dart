@@ -37,44 +37,43 @@ class _CategoryItemWidgetState extends State<CategoryItemWidget> {
               return Center(child: Text('No categories found'));
             } else {
               final categories = snapshot.data!;
-              return SizedBox(
-                height: 400, // 限制 GridView 的高度
-                child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: categories.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                  ),
-                  itemBuilder: (context, index) {
-                    final category = categories[index];
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return InnerCategoryScreen(category: category);
-                            },
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Image.network(width: 47, height: 47, category.image),
-                          Text(
-                            category.name,
-                            style: GoogleFonts.quicksand(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: categories.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 4.0, // 减小行间距
+                  crossAxisSpacing: 8.0,
+                  childAspectRatio: 1.3, // 调整宽高比，让高度更小
                 ),
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return InnerCategoryScreen(category: category);
+                          },
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Image.network(width: 47, height: 47, category.image),
+                        Text(
+                          category.name,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
             }
           },
