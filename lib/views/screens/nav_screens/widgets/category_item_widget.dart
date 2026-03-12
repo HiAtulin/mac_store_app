@@ -45,7 +45,7 @@ class _CategoryItemWidgetState extends State<CategoryItemWidget> {
                   crossAxisCount: 4,
                   mainAxisSpacing: 4.0, // 减小行间距
                   crossAxisSpacing: 8.0,
-                  childAspectRatio: 1.3, // 调整宽高比，让高度更小
+                  childAspectRatio: 1.2, // 调整宽高比，让高度更小
                 ),
                 itemBuilder: (context, index) {
                   final category = categories[index];

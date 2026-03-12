@@ -27,4 +27,25 @@ class ProductController {
       throw Exception("Error loading popular products: $e");
     }
   }
+  Future<List<Product>> loadProductsByCategory(String category) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$url/api/products-by-category/$category"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        List<Product> products = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return products;
+      } else {
+        throw Exception("Error loading products by category");
+      }
+    } catch (e) {
+      throw Exception("Error loading products by category: $e");
+    }
+  }
 }
