@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/models/product.dart';
+import 'package:mac_store_app/provider/cart_provider.dart';
+import 'package:mac_store_app/services/manage_http_response.dart';
 
-class ProductDetailScreen extends StatefulWidget {
+class ProductDetailScreen extends ConsumerStatefulWidget {
   final Product product;
   const ProductDetailScreen({super.key, required this.product});
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  ConsumerState<ProductDetailScreen> createState() =>
+      _ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    final _cartProvider = ref.read(cartProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -144,7 +149,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 Text(
                   widget.product.description,
-                  style: GoogleFonts.mochiyPopOne(
+                  style: GoogleFonts.lato(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                     letterSpacing: 1.5,
@@ -161,6 +166,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: InkWell(
           onTap: () {
             // 处理添加到购物车的逻辑
+            _cartProvider.addProductToCart(
+              productId: widget.product.id,
+              productName: widget.product.productName,
+              productPrice: widget.product.productPrice,
+              category: widget.product.category,
+              image: widget.product.images,
+              productQuantity: widget.product.quantity,
+              quantity: 1,
+              vendorId: widget.product.vendorId,
+              description: widget.product.description,
+              fullName: widget.product.fullName,
+            );
+            showSnackBar(context, widget.product.productName);
           },
           child: Container(
             width: 386,
