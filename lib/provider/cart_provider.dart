@@ -38,18 +38,21 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
         ),
       };
     } else {
-      state[productId] = Cart(
-        productName: productName,
-        productPrice: productPrice,
-        category: category,
-        image: image,
-        productQuantity: productQuantity,
-        quantity: quantity,
-        productId: productId,
-        description: description,
-        fullName: fullName,
-        vendorId: vendorId,
-      );
+      state = {
+        ...state,
+        productId: Cart(
+          productName: productName,
+          productPrice: productPrice,
+          category: category,
+          image: image,
+          productQuantity: productQuantity,
+          quantity: quantity,
+          productId: productId,
+          description: description,
+          fullName: fullName,
+          vendorId: vendorId,
+        ),
+      };
     }
   }
 
@@ -72,6 +75,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
   void removeCartItem(String productId) {
     if (state.containsKey(productId)) {
       state.remove(productId);
+      state = {...state};
     }
   }
 
