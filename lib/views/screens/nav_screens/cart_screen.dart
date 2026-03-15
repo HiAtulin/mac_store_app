@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mac_store_app/provider/cart_provider.dart';
 import 'package:mac_store_app/views/screens/main_screen.dart';
+import 'package:mac_store_app/views/screens/detail/screens/checkout_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -335,7 +336,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               alignment: Alignment(0.83, -1),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/checkout_screen');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CheckoutScreen()),
+                  );
                 },
                 child: Container(
                   width: 166,
