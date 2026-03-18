@@ -20,6 +20,25 @@ class UserProvider extends StateNotifier<User?> {
   void clearUser() {
     state = null;
   }
+  void recreateUserState({
+    required String state,
+    required String city,
+    required String locality,
+  }) {
+    if (this.state != null) {
+      this.state = User(
+        id: this.state!.id,
+        fullName: this.state!.fullName,
+        email: this.state!.email,
+        state: state,
+        city: city,
+        locality: locality,
+        password: this.state!.password,
+        token: this.state!.token,
+      );
+    }
+    
+  }
 }
 // Clear user data when logging out
 

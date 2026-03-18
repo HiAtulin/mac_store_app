@@ -112,4 +112,36 @@ class AuthController {
       print("Error: $e");
     }
   }
+
+  Future<void> updateUserLocation({
+    required context,
+    required String id,
+    required String state,
+    required String city,
+    required String locality,
+  }) async {
+    try {
+      final http.Response response = await http.put(
+        Uri.parse("$url/api/users/$id"),
+        body: jsonEncode({'state': state, 'city': city, 'locality': locality}),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () async {
+          final updatedUser = jsonEncode(jsonDecode(response.body));
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          final userJson = jsonEncode(jsonDecode(updatedUser));
+          ProviderContainer().read(userProvider.notifier).setUser(userJson);
+          await preferences.setString('user', userJson);
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, "Error Updating Location");
+      print("Error: $e");
+    }
+  }
 }

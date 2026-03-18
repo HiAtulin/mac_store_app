@@ -20,6 +20,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   Widget build(BuildContext context) {
     final cartData = ref.read(cartProvider);
     final _cartProvider = ref.read(cartProvider.notifier);
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
       body: Padding(
@@ -91,25 +92,45 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                       const SizedBox(height: 4),
                                       Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'United state',
-                                          style: GoogleFonts.lato(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.3,
-                                          ),
-                                        ),
+                                        child: user!.state.isNotEmpty
+                                            ? Text(
+                                                user.state,
+                                                style: GoogleFonts.lato(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1.3,
+                                                ),
+                                              )
+                                            : Text(
+                                                'United state',
+                                                style: GoogleFonts.lato(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1.3,
+                                                ),
+                                              ),
                                       ),
                                       Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Enter city',
-                                          style: GoogleFonts.lato(
-                                            color: const Color(0xFF7F808C),
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12,
-                                          ),
-                                        ),
+                                        child: user!.city.isNotEmpty
+                                            ? Text(
+                                                user.city,
+                                                style: GoogleFonts.lato(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1.3,
+                                                ),
+                                              )
+                                            : Text(
+                                                'Enter city',
+                                                style: GoogleFonts.lato(
+                                                  color: const Color(
+                                                    0xFF7F808C,
+                                                  ),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
                                       ),
                                     ],
                                   ),
@@ -334,7 +355,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ref.read(userProvider)!.state == ""
+        child: user == null || user.state.isEmpty
             ? TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -363,8 +384,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       var item = entry.value;
                       _orderController.uploadOrders(
                         id: '',
-                        fullName: ref.read(userProvider)!.fullName,
-                        email: ref.read(userProvider)!.email,
+                        fullName: user.fullName,
+                        email: user.email,
                         state: 'user_state',
                         city: 'user_city',
                         locality: 'user_locality',
@@ -373,7 +394,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         quantity: item.quantity,
                         category: item.category,
                         image: item.image[0],
-                        buyerId: ref.read(userProvider)!.id,
+                        buyerId: user.id,
                         vendorId: item.vendorId,
                         processing: true,
                         delivered: false,

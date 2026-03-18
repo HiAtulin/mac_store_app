@@ -1,17 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/controllers/auth_controller.dart';
+import 'package:mac_store_app/provider/user_provider.dart';
 
-class ShippingAddressScreen extends StatefulWidget {
+class ShippingAddressScreen extends ConsumerStatefulWidget {
   const ShippingAddressScreen({super.key});
 
   @override
-  State<ShippingAddressScreen> createState() => _ShippingAddressScreenState();
+  _ShippingAddressScreenState createState() => _ShippingAddressScreenState();
 }
 
-class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
+class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthController _authController = AuthController();
+  late String state, city, locality;
+
+  _showLoadingDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text(
+                'Loading...',
+                style: GoogleFonts.montserrat(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(userProvider);
+    final updateUser = ref.read(userProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.white.withOpacity(0.96),
       appBar: AppBar(
@@ -42,6 +76,9 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                   ),
                 ),
                 TextFormField(
+                  onChanged: (value) {
+                    state = value;
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your state';
@@ -52,6 +89,9 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 ),
                 SizedBox(height: 15),
                 TextFormField(
+                  onChanged: (value) {
+                    city = value;
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your city';
@@ -62,6 +102,9 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 ),
                 SizedBox(height: 15),
                 TextFormField(
+                  onChanged: (value) {
+                    locality = value;
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your locality';
@@ -78,10 +121,26 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
         child: InkWell(
-          onTap: () {
+          onTap: () async {
             if (_formKey.currentState!.validate()) {
-              // 验证通过，执行保存操作
-              print('Address saved');
+              _showLoadingDialog();
+              await _authController
+                  .updateUserLocation(
+                    context: context,
+                    id: user!.id,
+                    state: state,
+                    city: city,
+                    locality: locality,
+                  )
+                  .whenComplete(() {
+                    updateUser.recreateUserState(
+                      state: state,
+                      city: city,
+                      locality: locality,
+                    );
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  });
             } else {
               print('Address not saved');
             }
