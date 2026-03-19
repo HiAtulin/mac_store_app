@@ -75,24 +75,33 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Align(
+                                      Align(
                                         alignment: Alignment.centerLeft,
                                         child: SizedBox(
                                           width: 114,
-                                          child: Text(
-                                            'Add Adress',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1.1,
-                                            ),
-                                          ),
+                                          child: user!.state.isNotEmpty
+                                              ? Text(
+                                                  'Address',
+                                                  style: GoogleFonts.lato(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: 1.3,
+                                                  ),
+                                                )
+                                              : const Text(
+                                                  'Add Adress',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1.1,
+                                                  ),
+                                                ),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Align(
                                         alignment: Alignment.centerLeft,
-                                        child: user!.state.isNotEmpty
+                                        child: user.state.isNotEmpty
                                             ? Text(
                                                 user.state,
                                                 style: GoogleFonts.lato(
@@ -112,7 +121,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                       ),
                                       Align(
                                         alignment: Alignment.centerLeft,
-                                        child: user!.city.isNotEmpty
+                                        child: user.city.isNotEmpty
                                             ? Text(
                                                 user.city,
                                                 style: GoogleFonts.lato(

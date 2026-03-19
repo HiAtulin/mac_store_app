@@ -14,7 +14,17 @@ class ShippingAddressScreen extends ConsumerStatefulWidget {
 class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthController _authController = AuthController();
-  late String state, city, locality;
+  late TextEditingController _stateController,
+      _cityController,
+      _localityController;
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userProvider);
+    _stateController = TextEditingController(text: user?.state ?? '');
+    _cityController = TextEditingController(text: user?.city ?? '');
+    _localityController = TextEditingController(text: user?.locality ?? '');
+  }
 
   _showLoadingDialog() {
     showDialog(
@@ -76,9 +86,7 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
                   ),
                 ),
                 TextFormField(
-                  onChanged: (value) {
-                    state = value;
-                  },
+                  controller: _stateController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your state';
@@ -89,9 +97,7 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
                 ),
                 SizedBox(height: 15),
                 TextFormField(
-                  onChanged: (value) {
-                    city = value;
-                  },
+                  controller: _cityController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your city';
@@ -102,9 +108,7 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
                 ),
                 SizedBox(height: 15),
                 TextFormField(
-                  onChanged: (value) {
-                    locality = value;
-                  },
+                  controller: _localityController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your locality';
@@ -128,15 +132,15 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
                   .updateUserLocation(
                     context: context,
                     id: user!.id,
-                    state: state,
-                    city: city,
-                    locality: locality,
+                    state: _stateController.text,
+                    city: _cityController.text,
+                    locality: _localityController.text,
                   )
                   .whenComplete(() {
                     updateUser.recreateUserState(
-                      state: state,
-                      city: city,
-                      locality: locality,
+                      state: _stateController.text,
+                      city: _cityController.text,
+                      locality: _localityController.text,
                     );
                     Navigator.pop(context);
                     Navigator.pop(context);

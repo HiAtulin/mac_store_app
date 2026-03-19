@@ -55,7 +55,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
                   ),
                   Positioned(
                     bottom: 0,
-                    right: 2, 
+                    right: 2,
                     child: Image.asset(
                       'assets/icons/cart.png',
                       width: 26,
@@ -82,6 +82,14 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
               style: GoogleFonts.quicksand(
                 fontSize: 14,
                 color: Color(0xff868D94),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '\$${widget.product.productPrice.toStringAsFixed(2)}',
+              style: GoogleFonts.quicksand(
+                fontSize: 15,
+                color: Colors.purple,
                 fontWeight: FontWeight.bold,
               ),
             ),
