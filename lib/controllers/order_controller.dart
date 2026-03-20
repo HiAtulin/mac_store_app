@@ -60,4 +60,26 @@ class OrderController {
       showSnackBar(context, "Error uploading order $e");
     }
   }
+
+  Future<List<Order>> loadOrders({required String buyerId}) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('$url/api/orders/$buyerId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        List<Order> orders = data
+            .map((order) => Order.fromJson(order))
+            .toList();
+        return orders;
+      } else {
+        throw Exception("Failed loading orders");
+      }
+    } catch (e) {
+      throw Exception("Error loading orders");
+    }
+  }
 }

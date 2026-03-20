@@ -34,7 +34,8 @@ class Order {
     required this.processing,
     required this.delivered,
   });
-
+  //convert to json
+  String toJson() => json.encode(toMap());
   //convert to map
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -56,11 +57,8 @@ class Order {
     };
   }
 
-  //convert to json
-  String toJson() => json.encode(toMap());
-
   //convert to Object
-  factory Order.fromMap(Map<String, dynamic> map) {
+  factory Order.fromJson(Map<String, dynamic> map) {
     return Order(
       id: map['_id'] as String? ?? "",
       fullName: map['fullName'] as String? ?? "",
@@ -79,8 +77,4 @@ class Order {
       delivered: map['delivered'] as bool? ?? false,
     );
   }
-
-  // json to Map
-  factory Order.fromJson(String source) =>
-      Order.fromMap(jsonDecode(source) as Map<String, dynamic>);
 }
