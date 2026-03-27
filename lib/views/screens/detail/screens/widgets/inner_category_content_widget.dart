@@ -99,7 +99,7 @@ class _InnerCategoryContentWidgetState
                 } else {
                   final List<Product> products = snapshot.data!;
                   return SizedBox(
-                    height: 250,
+                    height: 280,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: products.length,

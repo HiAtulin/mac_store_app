@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/controllers/product_review_controller.dart';
 import 'package:mac_store_app/models/order.dart';
+import 'package:mac_store_app/services/manage_http_response.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final Order order;
@@ -281,6 +282,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   actions: [
                                     TextButton(
                                       onPressed: () {
+                                        if (_reviewController.text.isEmpty) {
+                                          showSnackBar(
+                                            context,
+                                            "Please write a review.",
+                                          );
+                                          return;
+                                        }
                                         final review = _reviewController.text;
                                         _productReviewController.uploadReview(
                                           review: review,

@@ -29,6 +29,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
         margin: EdgeInsets.symmetric(horizontal: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               height: 170,
@@ -77,6 +78,21 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
               ),
             ),
             SizedBox(height: 4),
+            widget.product.averageRating == 0
+                ? SizedBox()
+                : Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.yellow, size: 12),
+                      SizedBox(width: 4),
+                      Text(
+                        '${widget.product.averageRating.toStringAsFixed(1)}',
+                        style: GoogleFonts.quicksand(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+            SizedBox(height: 4),
             Text(
               widget.product.category,
               style: GoogleFonts.quicksand(
@@ -85,6 +101,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 4),
             Text(
               '\$${widget.product.productPrice.toStringAsFixed(2)}',
               style: GoogleFonts.quicksand(
