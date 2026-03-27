@@ -1,20 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/models/product.dart';
+import 'package:mac_store_app/provider/cart_provider.dart';
+import 'package:mac_store_app/provider/favorite_provider.dart';
+import 'package:mac_store_app/services/manage_http_response.dart';
 import 'package:mac_store_app/views/screens/detail/screens/product_detail_screen.dart';
 
-class ProductItemWidget extends StatefulWidget {
+class ProductItemWidget extends ConsumerStatefulWidget {
   final Product product;
   const ProductItemWidget({super.key, required this.product});
 
   @override
-  State<ProductItemWidget> createState() => _ProductItemWidgetState();
+  ConsumerState<ProductItemWidget> createState() => _ProductItemWidgetState();
 }
 
-class _ProductItemWidgetState extends State<ProductItemWidget> {
+class _ProductItemWidgetState extends ConsumerState<ProductItemWidget> {
   @override
   Widget build(BuildContext context) {
+    final cartProviderData = ref.read(cartProvider.notifier);
+    final favoriteProviderData = ref.read(favoriteProvider.notifier);
+    ref.watch(favoriteProvider);
+    final cartData = ref.watch(cartProvider);
+    final isInCart = cartData.containsKey(widget.product.id);
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -46,21 +56,77 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
                     width: 170,
                   ),
                   Positioned(
-                    top: 15,
-                    right: 2,
-                    child: Image.asset(
-                      'assets/icons/love.png',
-                      width: 26,
-                      height: 26,
+                    top: 5,
+                    right: 0,
+                    child: InkWell(
+                      child:
+                          favoriteProviderData.getFavoriteItems.containsKey(
+                            widget.product.id,
+                          )
+                          ? Icon(Icons.favorite, color: Colors.red)
+                          : Icon(Icons.favorite_border),
+                      onTap: () {
+                        // 处理收藏按钮点击事件
+                        if (favoriteProviderData.getFavoriteItems.containsKey(
+                          widget.product.id,
+                        )) {
+                          // 已收藏，移除
+                          favoriteProviderData.removeFavoriteItem(
+                            widget.product.id,
+                          );
+                          showSnackBar(
+                            context,
+                            'removed ${widget.product.productName} from favorite',
+                          );
+                        } else {
+                          // 未收藏，添加
+                          favoriteProviderData.addProductToFavorite(
+                            productName: widget.product.productName,
+                            productPrice: widget.product.productPrice,
+                            category: widget.product.category,
+                            image: widget.product.images,
+                            vendorId: widget.product.vendorId,
+                            productQuantity: widget.product.quantity,
+                            quantity: 1,
+                            productId: widget.product.id,
+                            description: widget.product.description,
+                            fullName: widget.product.fullName,
+                          );
+                          showSnackBar(
+                            context,
+                            'added ${widget.product.productName} to favorite',
+                          );
+                        }
+                      },
                     ),
                   ),
                   Positioned(
                     bottom: 0,
                     right: 2,
-                    child: Image.asset(
-                      'assets/icons/cart.png',
-                      width: 26,
-                      height: 26,
+                    child: InkWell(
+                      onTap: isInCart
+                          ? null
+                          : () {
+                              // 处理添加到购物车的逻辑
+                              cartProviderData.addProductToCart(
+                                productId: widget.product.id,
+                                productName: widget.product.productName,
+                                productPrice: widget.product.productPrice,
+                                category: widget.product.category,
+                                image: widget.product.images,
+                                productQuantity: widget.product.quantity,
+                                quantity: 1,
+                                vendorId: widget.product.vendorId,
+                                description: widget.product.description,
+                                fullName: widget.product.fullName,
+                              );
+                              showSnackBar(context, widget.product.productName);
+                            },
+                      child: Image.asset(
+                        'assets/icons/cart.png',
+                        width: 26,
+                        height: 26,
+                      ),
                     ),
                   ),
                 ],
