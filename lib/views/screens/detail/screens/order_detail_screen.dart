@@ -1,5 +1,7 @@
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/controllers/product_review_controller.dart';
 import 'package:mac_store_app/models/order.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -11,6 +13,10 @@ class OrderDetailScreen extends StatefulWidget {
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  final TextEditingController _reviewController = TextEditingController();
+  double rating = 0.0;
+  final ProductReviewController _productReviewController =
+      ProductReviewController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,9 +251,57 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ),
                   widget.order.delivered
                       ? TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("Leave a Review"),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextFormField(
+                                        controller: _reviewController,
+                                        decoration: InputDecoration(
+                                          labelText: "Your Review",
+                                          hintText: "Write your review",
+                                        ),
+                                      ),
+                                      RatingBar(
+                                        filledIcon: Icons.star,
+                                        emptyIcon: Icons.star_border,
+                                        onRatingChanged: (value) {
+                                          rating = value;
+                                        },
+                                        initialRating: 3,
+                                        maxRating: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        final review = _reviewController.text;
+                                        _productReviewController.uploadReview(
+                                          review: review,
+                                          rating: rating,
+                                          buyerId: widget.order.buyerId,
+                                          email: widget.order.email,
+                                          fullName: widget.order.fullName,
+                                          productId: widget.order.id,
+                                          context: context,
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Submit"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                           child: Text(
-                            "Leave Feedback",
+                            "Leave a Review",
                             style: GoogleFonts.montserrat(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
